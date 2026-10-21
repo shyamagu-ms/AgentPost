@@ -1,0 +1,36 @@
+{
+  "name": "agent-post-local",
+  "version": "0.2.0",
+  "description": "Local asynchronous agent correspondence over HTTP and SQLite",
+  "type": "module",
+  "bin": {
+    "agent-post": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "examples",
+    "docs",
+    "README.md",
+    "spec.md"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "node --input-type=module -e \"import { rmSync } from 'node:fs'; rmSync('dist', { recursive: true, force: true });\" && tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test test/agent-post.test.mjs",
+    "test:package": "npm run build && node test/package-smoke.mjs",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "commander": "^14.0.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.18.0",
+    "typescript": "^5.9.2"
+  },
+  "license": "MIT"
+}

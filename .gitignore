@@ -1,0 +1,40 @@
+node_modules/
+dist/
+.local/
+data/
+.agent-post-tools/
+*.tgz
+*.tsbuildinfo
+
+# Local configuration and credentials
+config.local.yaml
+.env
+.env.*
+!.env.example
+.npmrc
+!/.npmrc
+token
+connection.json
+connection-*.tmp
+server.lock
+server.jsonl
+*.key
+*.pem
+
+# Runtime data and backups, including files copied outside .local
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+*.db
+*.db-wal
+*.db-shm
+logs/
+backups/
+*.log
+
+# OS metadata
+.DS_Store
+Thumbs.db

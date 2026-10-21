@@ -1,0 +1,7 @@
+node_modules/
+# Prefer a data directory outside the project.
+data/
+connection.json
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
