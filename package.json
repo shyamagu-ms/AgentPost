@@ -7,6 +7,7 @@
     "agent-post": "dist/cli.js"
   },
   "files": [
+    ".github/skills/agent-post",
     "dist",
     "examples",
     "docs",

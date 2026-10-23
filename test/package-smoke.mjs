@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { execFile, spawn } from 'node:child_process';
 import { promisify } from 'node:util';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
+import { copyFileSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { once } from 'node:events';
 
@@ -18,7 +18,7 @@ async function node(args, cwd = process.cwd()) {
 }
 try {
   const packed = JSON.parse((await node([npmCli, 'pack', '--ignore-scripts', '--json', '--pack-destination', root])).stdout)[0];
-  assert.ok(packed.files.some(file => file.path.endsWith('SKILL.md')));
+  assert.ok(packed.files.some(file => file.path === '.github/skills/agent-post/SKILL.md'));
   assert.ok(packed.files.every(file => !file.path.includes('.local/') && !file.path.includes('/node_modules/')
     && !file.path.endsWith('connection.json') && !file.path.endsWith('home.js') && !file.path.endsWith('.sqlite')));
   const archive = join(root, packed.filename);
@@ -28,6 +28,15 @@ try {
     writeFileSync(join(cwd, 'package.json'), JSON.stringify({ name: `agent-post-consumer-${index}`, private: true }));
     await node([npmCli, 'install', '--save-dev', '--no-audit', '--no-fund', archive], cwd);
   }));
+  const sourceSkill = readFileSync(new URL('../.github/skills/agent-post/SKILL.md', import.meta.url), 'utf8');
+  for (const cwd of projects) {
+    const relative = join('.github', 'skills', 'agent-post', 'SKILL.md');
+    const installedSkill = join(cwd, 'node_modules', 'agent-post-local', relative);
+    const projectSkill = join(cwd, relative);
+    mkdirSync(dirname(projectSkill), { recursive: true });
+    copyFileSync(installedSkill, projectSkill);
+    assert.equal(readFileSync(projectSkill, 'utf8'), sourceSkill);
+  }
   const installedCli = join(projects[0], 'node_modules', 'agent-post-local', 'dist', 'cli.js');
   child = spawn(process.execPath, [installedCli, 'serve', '--data-dir', dataDir, '--port', '0'], { stdio: ['ignore', 'pipe', 'pipe'] });
   childClosed = once(child, 'close');
